@@ -2,16 +2,30 @@ import { motion } from "framer-motion";
 import Input from "../components/Input";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
 function SignUpPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const isLoading = false;
+  const { signup, error, isLoading } = useAuthStore();
+
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    try {
+      await signup(email, password, name);
+      navigate("/verify-email");
+      toast.success(
+        "Verification email sent successfully. Please check your inbox."
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -49,6 +63,7 @@ function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
 
           <PasswordStrengthMeter password={password} />
 

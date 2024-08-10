@@ -3,15 +3,24 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import Input from "../components/Input";
+import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isLoading = false;
+  const { login, isLoading, error } = useAuthStore();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      await login(email, password);
+      navigate("/");
+      toast.success("Login Succesfully.");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
