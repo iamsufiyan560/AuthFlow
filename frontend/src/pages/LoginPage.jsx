@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
@@ -11,6 +11,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
 
   const { login, isLoading, error } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,7 +20,11 @@ function LoginPage() {
       navigate("/");
       toast.success("Login Succesfully.");
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "An unexpected error occurred";
+      toast.error(errorMessage);
     }
   };
 
